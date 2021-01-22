@@ -12,11 +12,12 @@ defmodule WorkflowApiWeb.Router do
     get "/modules-functions", WorkflowApiController, :modules_functions
     get "/module-functions/:module_name", WorkflowApiController, :module_functions
 
-    get "/get-sequence/:route_name", WorkflowApiController, :get_sequence
+    # get "/sequences", WorkflowApiController, :sequences
+    get "/get-sequence/:sequence_name", WorkflowApiController, :get_sequence
 
-    post "/set-sequence/:route_name", WorkflowApiController, :set_sequence
+    post "/set-sequence/:sequence_name", WorkflowApiController, :set_sequence
 
-    post "/execute-sequence-blocks", WorkflowApiController, :execute_blocks
+    post "/execute-sequence/:sequence_name", WorkflowApiController, :execute_sequence
   end
 
   # Enables LiveDashboard only for development

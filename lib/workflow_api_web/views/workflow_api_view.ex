@@ -43,4 +43,14 @@ defmodule WorkflowApiWeb.WorkflowApiView do
       arity: functions_arity
     }
   end
+
+  def render("show.json", %{sequence_result: result}) do
+    %{ data: render_one(result, WorkflowApiView, "result.json")}
+  end
+
+  def render("result.json", %{workflow_api: result}) do
+    %{
+      result: result
+    }
+  end
 end

@@ -44,8 +44,8 @@ defmodule WorkflowApiWeb.WorkflowApiController do
     end
   end
 
-  def get_sequence(conn, %{"route_name" => route_name}) do
-    case ManageWorkflowApi.get_sequence(route_name) do
+  def get_sequence(conn, %{"sequence_name" => sequence_name}) do
+    case ManageWorkflowApi.get_sequence(sequence_name) do
       [] ->
         conn
         |> put_status(:ok)
@@ -61,13 +61,13 @@ defmodule WorkflowApiWeb.WorkflowApiController do
     end
   end
 
-  def execute_blocks(conn, params) do
+  def execute_sequence(conn, params) do
 
-    case ManageWorkflowApi.execute_blocks(params) do
+    case ManageWorkflowApi.execute_sequence(params) do
       {:ok, result} ->
         conn
         |> put_status(:ok)
-        |> render("index.json", %{functions: [result]})
+        |> render("show.json", %{sequence_result: result})
 
       {:error, list_errors} ->
         ManageErrors.call(conn, list_errors, :bad_request)
