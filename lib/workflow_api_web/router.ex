@@ -12,7 +12,7 @@ defmodule WorkflowApiWeb.Router do
     get "/modules-functions", WorkflowApiController, :modules_functions
     get "/module-functions/:module_name", WorkflowApiController, :module_functions
 
-    # get "/sequences", WorkflowApiController, :sequences
+    get "/sequences", WorkflowApiController, :sequences
     get "/get-sequence/:sequence_name", WorkflowApiController, :get_sequence
 
     post "/set-sequence/:sequence_name", WorkflowApiController, :set_sequence

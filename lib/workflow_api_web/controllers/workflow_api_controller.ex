@@ -32,6 +32,18 @@ defmodule WorkflowApiWeb.WorkflowApiController do
     |> render("index.json", %{functions: []})
   end
 
+  def sequences(conn, _params) do
+    case ManageWorkflowApi.sequences() do
+      sequences ->
+        conn
+        |> put_status(:ok)
+        |> render("index.json", %{sequences: sequences})
+
+      # {:error, list_errors} ->
+      #   ManageErrors.call(conn, list_errors, :bad_request)
+    end
+  end
+
   def set_sequence(conn, params) do
     case ManageWorkflowApi.set_sequence(params) do
       {:ok, result} ->

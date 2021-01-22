@@ -28,16 +28,20 @@ defmodule WorkflowApi.Application.Usecases.ManageWorkflowApi do
   end
 
   def set_sequence(params) do
-    IO.inspect(params["_json"])
+    IO.inspect(params)
+
     sequence_name = params["sequence_name"]
-    sequence = params["_json"]
 
-    # {:ok, encoded_sequence} = Poison.encode(sequence)
+    :ets.insert(:sequence_operations, {sequence_name, Map.take(params, ["sequence", "links"])})
 
-    :ets.insert(:sequence_operations, {sequence_name, sequence})
-    {:ok, "foi"}
+    {:ok, "ok"}
   end
 
+  def sequences() do
+    :ets.tab2list(:sequence_operations)
+  end
+
+  @spec get_sequence(any) :: [tuple]
   def get_sequence(sequence_name) do
     :ets.lookup(:sequence_operations, sequence_name)
   end
@@ -54,10 +58,13 @@ defmodule WorkflowApi.Application.Usecases.ManageWorkflowApi do
         {:ok, "Empty sequence!"}
 
       [{_key_sequence_name, stored_sequence}] ->
-        IO.inspect(stored_sequence)
+        # Pegando a sequência de operações, ignorando a lista de links.
+        sequence_operations = stored_sequence["sequence"]
+
+        IO.inspect(sequence_operations)
 
         # Calculando aridade da sequẽncia completa.
-        sequence_arity = count_arity_sequence(stored_sequence)
+        sequence_arity = count_arity_sequence(sequence_operations)
 
         # Sequência de parâmetros.
         sequence_params = params["sequence"]
@@ -66,22 +73,11 @@ defmodule WorkflowApi.Application.Usecases.ManageWorkflowApi do
           {:error, "The number of params must be #{sequence_arity}"}
         else
 
-          process_sequence(stored_sequence, sequence_params, :start)
-          # {:ok, "The number of params is correct!"}
+          process_sequence(sequence_operations, sequence_params, :start)
         end
 
       _ -> {:error, "Some error occurred."}
     end
-    # list_blocks_atoms = Enum.map(params["sequence"], fn block ->
-    #   %{
-    #     module_name_atom: String.to_atom(block["moduleName"]),
-    #     function_atom: String.to_atom(block["function"]),
-    #     params: block["params"]
-    #   }
-    # end)
-
-    # IO.inspect(list_blocks_atoms)
-    # process_blocks(list_blocks_atoms, :start)
   end
 
   def count_arity_sequence(sequence) do

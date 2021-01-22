@@ -17,21 +17,29 @@ defmodule WorkflowApiWeb.WorkflowApiView do
     %{data: render_many(modules, WorkflowApiView, "modules_functions.json")}
   end
 
-  # def render("modules_functions.json", %{workflow_api: module}) do
-  #   %{
-  #     module: module.module,
-  #     functions: Enum.map(module.functions, fn func ->
-  #       Tuple.to_list(func)
-  #     end)
-  #   }
-  # end
-
   def render("modules_functions.json", %{workflow_api: module}) do
     %{
       module: module.module,
       functions: render_many(module.functions, WorkflowApiView, "function.json")
     }
   end
+
+  def render("index.json", %{sequences: sequences}) do
+    %{data: render_many(sequences, WorkflowApiView, "sequence.json")}
+  end
+
+  def render("sequence.json", %{workflow_api: {name, blocks}}) do
+    %{
+      name: name,
+      sequence: blocks
+    }
+  end
+
+  # def render("block.json", %{workflow_api: block}) do
+  #   %{
+
+  #   }
+  # end
 
   def render("index.json", %{functions: functions}) do
     %{data: render_many(functions, WorkflowApiView, "function.json")}
