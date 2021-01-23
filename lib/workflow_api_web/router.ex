@@ -8,6 +8,13 @@ defmodule WorkflowApiWeb.Router do
   scope "/api", WorkflowApiWeb do
     pipe_through :api
 
+    post "/function/create", FunctionController, :create
+    get "/function/list", FunctionController, :list
+
+    post "/module/create", ModuleController, :create
+    get "/module/list", ModuleController, :list
+    put "/module/update-functions/:id", ModuleController, :update_functions
+
     get "/modules", WorkflowApiController, :modules
     get "/modules-functions", WorkflowApiController, :modules_functions
     get "/module-functions/:module_name", WorkflowApiController, :module_functions
