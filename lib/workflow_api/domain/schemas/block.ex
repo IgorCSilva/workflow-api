@@ -1,4 +1,4 @@
-defmodule WorkflowApi.Domain.Schemas.Module do
+defmodule WorkflowApi.Domain.Schemas.Block do
   @moduledoc """
       Schema for plan informations
       - name: plan name.
@@ -10,30 +10,22 @@ defmodule WorkflowApi.Domain.Schemas.Module do
     """
   use Ecto.Schema
 
-  alias WorkflowApi.Domain.Schemas.{Module, Function}
-
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  schema "modules" do
-    field :module, :string
-    field :label, :string
-    field :description, :string, default: ""
-
-    field :module_functions, {:array, :binary_id}, virtual: true
-
-    has_many :functions, Function, on_replace: :nilify
-
-    timestamps()
+  embedded_schema do
+    field :workflow_block_id, :integer
+    field :workflow_block_pos_x, :integer
+    field :workflow_block_pos_y, :integer
+    field :function_id, :string
   end
 
   @doc """
   Initial Changeset to create a function.
   """
-  def changeset(params) do
-    %Module{}
-    |> cast(params, [:module, :label, :description, :module_functions])
-    |> validate_required([:module, :label, :module_functions])
+  def changeset(block, params) do
+    block
+    |> cast(params, [:workflow_block_id, :workflow_block_pos_x, :workflow_block_pos_y, :function_id])
+    |> validate_required([:workflow_block_id, :workflow_block_pos_x, :workflow_block_pos_y, :function_id])
 
   end
 

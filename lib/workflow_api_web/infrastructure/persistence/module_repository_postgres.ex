@@ -61,15 +61,49 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.ModuleRepositoryPostgres do
 
     current_functions = module.functions
 
-    new_functions = Enum.map(functions, fn function_id ->
-      Repo.get(Function, function_id)
-      # Functions.
+    current_functions_id = Enum.map(current_functions, fn cf ->
+      cf.id
     end)
+
+    # Retirando ids de funções que já pertencem ao módulo.
+    functions_to_add = functions -- current_functions_id
+
+    # Buscando novas funções no banco de dados e removendo da lista os nils.
+    new_functions =
+      functions_to_add
+      |> Enum.map(fn function_id ->
+        Repo.get(Function, function_id)
+      end)
+      |> Enum.filter(fn function ->
+        not is_nil(function)
+      end)
 
     IO.inspect(new_functions ++ current_functions)
 
     updated_module = change(module, %{functions: current_functions ++ new_functions})
-    IO.inspect(updated_module)
+    # IO.inspect(updated_module)
+
+    case Repo.update(updated_module) do
+      {:ok, module} ->
+        complete_module =
+          module
+          |> Repo.preload([:functions])
+
+        {:ok, complete_module}
+
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  @impl IModuleRepository
+  def update_functions(module, "remove", functions) do
+
+    functions_to_continue = Enum.filter(module.functions, fn function ->
+      function.id not in functions
+    end)
+
+    updated_module = change(module, %{functions: functions_to_continue})
+    # IO.inspect(updated_module)
 
     case Repo.update(updated_module) do
       {:ok, module} ->

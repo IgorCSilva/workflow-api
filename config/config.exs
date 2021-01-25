@@ -10,7 +10,8 @@ use Mix.Config
 config :workflow_api,
   ecto_repos: [WorkflowApi.Repo],
   function_repository: WorkflowApiWeb.Infrastructure.Persistence.FunctionRepositoryPostgres,
-  module_repository: WorkflowApiWeb.Infrastructure.Persistence.ModuleRepositoryPostgres
+  module_repository: WorkflowApiWeb.Infrastructure.Persistence.ModuleRepositoryPostgres,
+  sequence_repository: WorkflowApiWeb.Infrastructure.Persistence.SequenceRepositoryPostgres
 
 # Configures the endpoint
 config :workflow_api, WorkflowApiWeb.Endpoint,
