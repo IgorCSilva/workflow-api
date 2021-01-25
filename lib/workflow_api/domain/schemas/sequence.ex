@@ -28,8 +28,8 @@ defmodule WorkflowApi.Domain.Schemas.Sequence do
   @doc """
   Initial Changeset to create a function.
   """
-  def changeset(params) do
-    %Sequence{}
+  def changeset(sequence, params) do
+    sequence
     |> cast(params, [:name, :description])
     |> cast_embed(:blocks)
     |> cast_embed(:links)

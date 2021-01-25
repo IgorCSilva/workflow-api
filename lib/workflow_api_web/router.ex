@@ -18,8 +18,10 @@ defmodule WorkflowApiWeb.Router do
     put "/module/update-functions/:id", ModuleController, :update_functions
 
     # Manipulating sequences.
-    post "/sequence/set/:sequence_name", SequenceController, :set
+    post "/sequence/create", SequenceController, :create
     get "/sequence/list", SequenceController, :list
+    put "/sequence/update/:id", SequenceController, :update
+    delete "/sequence/delete/:id", SequenceController, :delete
 
     get "/modules", WorkflowApiController, :modules
     get "/modules-functions", WorkflowApiController, :modules_functions
