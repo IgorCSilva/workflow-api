@@ -21,6 +21,8 @@ defmodule WorkflowApiWeb.Router do
     post "/sequence/create", SequenceController, :create
     get "/sequence/list", SequenceController, :list
     put "/sequence/update/:id", SequenceController, :update
+    post "/sequence/execute", SequenceController, :execute_sequence
+
     delete "/sequence/delete/:id", SequenceController, :delete
 
     get "/modules", WorkflowApiController, :modules
@@ -32,7 +34,6 @@ defmodule WorkflowApiWeb.Router do
 
     post "/set-sequence/:sequence_name", WorkflowApiController, :set_sequence
 
-    post "/execute-sequence/:sequence_name", WorkflowApiController, :execute_sequence
   end
 
   # Enables LiveDashboard only for development

@@ -4,7 +4,7 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.FunctionRepositoryPostgres d
 
   alias WorkflowApi.Repo
   alias WorkflowApi.Domain.Schemas.Function
-  alias WorkflowApi.Domain.Repositories.{IFunctionRepository}
+  alias WorkflowApi.Domain.Repositories.IFunctionRepository
   alias WorkflowApi.Application.Utils.ChangesetErrorsMessage
 
   @behaviour IFunctionRepository
@@ -39,6 +39,15 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.FunctionRepositoryPostgres d
     Repo.all(query)
   end
 
+  @impl IFunctionRepository
+  def get_by_id_list(list) do
+    query = from f in Function, where: f.id in ^list
+
+    Repo.all(query)
+    |> Enum.map(fn function ->
+      Repo.preload(function, [:module])
+    end)
+  end
   @doc """
   Retorna um serviço.
   """

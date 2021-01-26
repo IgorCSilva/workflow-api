@@ -58,7 +58,6 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.SequenceRepositoryPostgres d
   """
   @impl ISequenceRepository
   def update(changeset) do
-    IO.inspect(changeset, label: "REPOSITORY: ")
     Repo.update(changeset)
   end
 

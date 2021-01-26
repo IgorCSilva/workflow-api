@@ -6,6 +6,7 @@ defmodule WorkflowApiWeb.SequenceController do
 
   # Repository
   @sequence_repository Application.get_env(:workflow_api, :sequence_repository)
+  @function_repository Application.get_env(:workflow_api, :function_repository)
 
   def create(conn, params) do
     case ManageSequence.create(params, @sequence_repository) do
@@ -48,6 +49,20 @@ defmodule WorkflowApiWeb.SequenceController do
         ManageErrors.call(conn, list_errors, :bad_request)
     end
 
+  end
+
+  def execute_sequence(conn, params) do
+
+    case ManageSequence.execute_sequence(params, @sequence_repository, @function_repository) do
+      {:ok, result} ->
+        IO.inspect(result)
+        conn
+        |> put_status(:ok)
+        |> render("show.json", %{sequence_result: result})
+
+      {:error, list_errors} ->
+        ManageErrors.call(conn, list_errors, :bad_request)
+    end
   end
 
   @doc """

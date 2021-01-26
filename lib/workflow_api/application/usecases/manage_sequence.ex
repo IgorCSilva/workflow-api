@@ -101,6 +101,113 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
 
   end
 
+  def execute_sequence(params, repository, function_repository) do
+
+    sequence_name = params["name"]
+
+    case repository.get_by_name(sequence_name) do
+      nil ->
+        {:error, "Sequence not found"}
+
+      sequence ->
+        # Formando uma lista com os ids das funções utilizadas.
+        sequence_functions_id =
+          sequence.blocks
+          |> Enum.map(fn block ->
+            block.function_id
+          end)
+          |> Enum.uniq()
+
+        # Buscando funções no repositório.
+        case function_repository.get_by_id_list(sequence_functions_id) do
+          [] ->
+            {:error, "Functions not found!"}
+
+          functions_list ->
+            # Montando sequência de funções.
+            sequence_functions = Enum.map(sequence.blocks, fn block ->
+              Enum.find(functions_list, fn function ->
+                block.function_id == function.id
+              end)
+            end)
+
+            cond do
+              Enum.any?(sequence_functions, fn f -> is_nil(f) end) ->
+                {:error, "Some function wasn't found."}
+
+              true ->
+                # Calculando aridade da sequẽncia completa.
+                sequence_arity = count_arity_sequence(sequence_functions)
+
+                # Sequência de parâmetros.
+                sequence_params = params["params"]
+
+                if Enum.count(sequence_params) != sequence_arity do
+                  {:error, "The number of params must be #{sequence_arity}"}
+                else
+
+                  process_sequence(sequence_functions, sequence_params, :start, nil)
+                  # {:error, "aqui"}
+                end
+            end
+        end
+    end
+  end
+
+  def count_arity_sequence(sequence) do
+    [head | tail] = sequence
+
+    total_tail_arity =
+      Enum.reduce(tail, 0, fn block, acc ->
+        if block.arity == 0 do
+          acc
+        else
+          acc + block.arity - 1
+        end
+      end)
+
+    total_tail_arity + head.arity
+  end
+
+  def process_sequence([], _params, state, result) do
+    {:ok, result}
+  end
+
+  def process_sequence(sequence, params, state, result) do
+
+    # Pegando o primeiro bloco da lista.
+    [function | tail] = sequence
+
+    # Transformando nomes de módulo e função em atoms.
+    module_atom = String.to_atom("Elixir." <> function.module.module)
+    function_atom = String.to_atom(function.function)
+
+    cond do
+      state == :start ->
+        block_operation_response = apply(module_atom, function_atom, Enum.slice(params, 0..(function.arity - 1)))
+
+        process_sequence(tail, Enum.drop(params, function.arity), :started, block_operation_response)
+
+      true ->
+        cond do
+          function.arity == 0 ->
+            block_operation_response = apply(module_atom, function_atom, [])
+
+            process_sequence(tail, params, :started, block_operation_response)
+
+          function.arity == 1 ->
+            block_operation_response = apply(module_atom, function_atom, [result])
+
+            process_sequence(tail, params, :started, block_operation_response)
+
+          true ->
+            block_operation_response = apply(module_atom, function_atom, [result | Enum.slice(params, 0..((function.arity - 1) - 1))])
+
+            process_sequence(tail, Enum.drop(params, function.arity - 1), :started, block_operation_response)
+        end
+    end
+  end
+
   @doc """
   Delete service by id or return error if we receive an invalid id.
   """

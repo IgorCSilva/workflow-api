@@ -16,6 +16,14 @@ defmodule WorkflowApi.Context.Calculator do
     div(a, b)
   end
 
+  def doble(value) do
+    value * 2
+  end
+
+  def square(value) do
+    value * value
+  end
+
   def times_10(value) do
     value * 10
   end

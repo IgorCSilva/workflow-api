@@ -7,6 +7,14 @@ defmodule WorkflowApiWeb.SequenceView do
     %{data: render_many(sequences, SequenceView, "sequence.json")}
   end
 
+  def render("show.json", %{sequence_result: result}) do
+    %{data: render_one(result, SequenceView, "sequence_result.json")}
+  end
+
+  def render("sequence_result.json", %{sequence: result}) do
+    result
+  end
+
   def render("show.json", %{sequence: sequence}) do
     %{data: render_one(sequence, SequenceView, "sequence.json")}
   end
