@@ -49,21 +49,21 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.FunctionRepositoryPostgres d
     end)
   end
   @doc """
-  Retorna um serviço.
+  Retorna uma função.
   """
-  # @impl IServiceRepository
-  # def get_service(service_id) do
-  #   Repo.get(Service, service_id)
-  # end
+  @impl IFunctionRepository
+  def get(id) do
+    Repo.get(Function, id)
+  end
 
   @doc """
   Atualiza um serviço baseado em um changeset.
   Caso ocorra algum erro o mesmo é detalhado.
   """
-  # @impl IServiceRepository
-  # def update_service(changeset) do
-  #   Repo.update(changeset)
-  # end
+  @impl IFunctionRepository
+  def update(changeset) do
+    Repo.update(changeset)
+  end
 
   @doc """
   Deleta um serviço.

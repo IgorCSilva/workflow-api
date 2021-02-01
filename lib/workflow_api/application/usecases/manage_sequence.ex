@@ -3,6 +3,9 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   alias WorkflowApi.Domain.Schemas.{Sequence}
   alias WorkflowApi.Application.Utils.ChangesetErrorsMessage
 
+  # Resposta para funções que são void.
+  @type_response_no_reply ["no_reply"]
+
   def create(params, repository) do
     IO.inspect(params, label: "params")
 
@@ -146,7 +149,7 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
                   {:error, "The number of params must be #{sequence_arity}"}
                 else
 
-                  process_sequence(sequence_functions, sequence_params, :start, nil)
+                  process_sequence(sequence_functions, sequence_params, @type_response_no_reply, nil)
                   # {:error, "aqui"}
                 end
             end
@@ -155,25 +158,37 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   end
 
   def count_arity_sequence(sequence) do
-    [head | tail] = sequence
+    # [head | tail] = sequence
 
-    total_tail_arity =
-      Enum.reduce(tail, 0, fn block, acc ->
-        if block.arity == 0 do
-          acc
-        else
-          acc + block.arity - 1
+    total_arity =
+      Enum.reduce(sequence, {0, @type_response_no_reply} , fn block, {current_arity, type_response} ->
+        cond do
+          block.arity == 0 ->
+            {current_arity, block.responsesType}
+
+            type_response == @type_response_no_reply ->
+            {current_arity + block.arity, block.responsesType}
+
+          true ->
+            {current_arity + block.arity - 1, block.responsesType}
         end
       end)
 
-    total_tail_arity + head.arity
+    {result_arity, _type_reponse} = total_arity
+    result_arity
   end
 
-  def process_sequence([], _params, state, result) do
+  @spec process_sequence(
+          [atom | %{arity: any, function: binary, module: atom | map}],
+          any,
+          any,
+          any
+        ) :: {:ok, any}
+  def process_sequence([], _params, response_type, result) do
     {:ok, result}
   end
 
-  def process_sequence(sequence, params, state, result) do
+  def process_sequence(sequence, params, response_type, result) do
 
     # Pegando o primeiro bloco da lista.
     [function | tail] = sequence
@@ -183,28 +198,20 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
     function_atom = String.to_atom(function.function)
 
     cond do
-      state == :start ->
+      function.arity == 0 ->
+        block_operation_response = apply(module_atom, function_atom, [])
+
+        process_sequence(tail, params, function.responsesType, block_operation_response)
+
+      response_type == @type_response_no_reply ->
         block_operation_response = apply(module_atom, function_atom, Enum.slice(params, 0..(function.arity - 1)))
 
-        process_sequence(tail, Enum.drop(params, function.arity), :started, block_operation_response)
+        process_sequence(tail, Enum.drop(params, function.arity), function.responsesType, block_operation_response)
 
       true ->
-        cond do
-          function.arity == 0 ->
-            block_operation_response = apply(module_atom, function_atom, [])
+        block_operation_response = apply(module_atom, function_atom, Enum.slice([result | params], 0..(function.arity - 1)))
 
-            process_sequence(tail, params, :started, block_operation_response)
-
-          function.arity == 1 ->
-            block_operation_response = apply(module_atom, function_atom, [result])
-
-            process_sequence(tail, params, :started, block_operation_response)
-
-          true ->
-            block_operation_response = apply(module_atom, function_atom, [result | Enum.slice(params, 0..((function.arity - 1) - 1))])
-
-            process_sequence(tail, Enum.drop(params, function.arity - 1), :started, block_operation_response)
-        end
+        process_sequence(tail, Enum.drop(params, function.arity - 1), function.responsesType, block_operation_response)
     end
   end
 

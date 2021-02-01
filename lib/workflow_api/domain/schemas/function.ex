@@ -37,31 +37,26 @@ defmodule WorkflowApi.Domain.Schemas.Function do
     %Function{}
     |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType, :block_position_x, :block_position_y])
     |> validate_required([:function, :label, :arity, :argumentsType, :responsesType])
-    |> validate_number(:arity, greater_than: -1)
+    |> changeset_create_update()
   end
 
   @doc """
   Initial Changeset to update a plan.
   """
-  # def changeset_update(_function, params) do
-  #   %Function{}
-  #   |> cast(params, [:name, :description, :price, :period, :id])
-  #   |> GeneralFunctions.validate_uuid(:id)
-  #   |> changeset_create_update(params)
-  # end
+  def changeset_update(function, params) do
+    function
+    |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType, :block_position_x, :block_position_y, :id])
+    |> changeset_create_update()
+  end
 
   @doc """
   Changeset with create and update validations.
   """
-  # def changeset_create_update(changeset, _params) do
-  #   changeset
-  #   |> unsafe_validate_unique(:name, Stores.Repo, message: "Este nome de plano já existe.")
-  #   |> validate_length(:name, min: 4)
-  #   |> validate_number(:price, greater_than: 0)
-  #   |> validate_number(:period, greater_than: 0)
-  #   |> unique_constraint(:name)
+  def changeset_create_update(changeset) do
+    changeset
+    |> validate_number(:arity, greater_than: -1)
 
-  # end
+  end
 
   @doc """
   Validating id format.
