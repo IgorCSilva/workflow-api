@@ -4,7 +4,7 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   alias WorkflowApi.Application.Utils.ChangesetErrorsMessage
 
   # Resposta para funções que são void.
-  @type_response_no_reply ["no_reply"]
+  @type_response_no_reply []
 
   def create(params, repository) do
     IO.inspect(params, label: "params")
