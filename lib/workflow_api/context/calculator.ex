@@ -4,6 +4,10 @@ defmodule WorkflowApi.Context.Calculator do
     a + b
   end
 
+  def add_list(list) do
+    Enum.sum(list)
+  end
+
   def sub(a, b) do
     a - b
   end

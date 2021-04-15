@@ -9,28 +9,9 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   def create(params, repository) do
     IO.inspect(params, label: "params")
 
-    formated_sequence = %{
-      "name" => params["name"],
-      "blocks" => Enum.map(params["sequence"], fn block ->
-        %{
-          "workflow_block_id" => block["id"],
-          "workflow_block_pos_x" => block["x"],
-          "workflow_block_pos_y" => block["y"],
-          "function_id" => block["functionId"],
-        }
-      end),
-      "links" => Enum.map(params["links"], fn link ->
-        %{
-          "workflow_link_id" => link["id"],
-          "from" => link["from"],
-          "to" => link["to"]
-        }
-      end)
-    }
-
-    IO.inspect(formated_sequence)
+    # IO.inspect(params)
     # Verificando se os dados fornecidos em params são válidos.
-    case changeset = Sequence.changeset(%Sequence{}, formated_sequence) do
+    case changeset = Sequence.changeset(%Sequence{}, params) do
       %Ecto.Changeset{:valid? => true} ->
         IO.inspect(changeset)
         repository.create(changeset)
@@ -51,33 +32,11 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   """
   def update(params, repository) do
 
-    formated_sequence = %{
-      "blocks" => Enum.map(params["sequence"], fn block ->
-        %{
-          "workflow_block_id" => block["id"],
-          "workflow_block_pos_x" => block["x"],
-          "workflow_block_pos_y" => block["y"],
-          "function_id" => block["functionId"],
-        }
-      end),
-      "links" => Enum.map(params["links"], fn link ->
-        %{
-          "workflow_link_id" => link["id"],
-          "from" => link["from"],
-          "to" => link["to"]
-        }
-      end)
-    }
-
-    IO.inspect(formated_sequence)
-    {:ok, sid} = Map.fetch(params, "id")
-    IO.inspect(repository.get(sid))
-
     with {:ok, sequence_id} <- Map.fetch(params, "id"),
       # {:uuid, {:ok, id}} <- {:uuid, Ecto.UUID.cast(sequence_id)},
       sequence <- repository.get(sequence_id),
       {:is_nil, false} <- {:is_nil, is_nil(sequence)},
-      changeset <- Sequence.changeset(sequence, Map.put(formated_sequence, "name", sequence.name)),
+      changeset <- Sequence.changeset(sequence, params),
       %Ecto.Changeset{:valid? => true} <- changeset do
 
         IO.inspect(changeset)
@@ -113,12 +72,10 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
         {:error, "Sequence not found"}
 
       sequence ->
+        IO.inspect(sequence)
         # Formando uma lista com os ids das funções utilizadas.
         sequence_functions_id =
-          sequence.blocks
-          |> Enum.map(fn block ->
-            block.function_id
-          end)
+          sequence.functions_sequence
           |> Enum.uniq()
 
         # Buscando funções no repositório.
@@ -128,9 +85,9 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
 
           functions_list ->
             # Montando sequência de funções.
-            sequence_functions = Enum.map(sequence.blocks, fn block ->
+            sequence_functions = Enum.map(sequence.functions_sequence, fn fid ->
               Enum.find(functions_list, fn function ->
-                block.function_id == function.id
+                fid == function.id
               end)
             end)
 

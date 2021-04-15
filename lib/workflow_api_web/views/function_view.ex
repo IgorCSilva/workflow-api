@@ -12,6 +12,6 @@ defmodule WorkflowApiWeb.FunctionView do
   end
 
   def render("function.json", %{function: function}) do
-    Map.take(function, [:argumentsType, :arity, :block_position_x, :block_position_y, :description, :function, :id, :label, :responsesType])
+    Map.take(function, [:argumentsType, :arity, :description, :function, :id, :label, :responsesType])
   end
 end

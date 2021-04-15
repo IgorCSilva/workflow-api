@@ -22,8 +22,8 @@ defmodule WorkflowApi.Domain.Schemas.Function do
     field :arity, :integer
     field :argumentsType, {:array, :string}
     field :responsesType, {:array, :string}
-    field :block_position_x, :integer, default: 100
-    field :block_position_y, :integer, default: 100
+    # field :block_position_x, :integer, default: 100
+    # field :block_position_y, :integer, default: 100
 
     belongs_to :module, Module, type: :binary_id
 
@@ -35,7 +35,7 @@ defmodule WorkflowApi.Domain.Schemas.Function do
   """
   def changeset(params) do
     %Function{}
-    |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType, :block_position_x, :block_position_y])
+    |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType])
     |> validate_required([:function, :label, :arity, :argumentsType, :responsesType])
     |> changeset_create_update()
   end
@@ -45,7 +45,7 @@ defmodule WorkflowApi.Domain.Schemas.Function do
   """
   def changeset_update(function, params) do
     function
-    |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType, :block_position_x, :block_position_y, :id])
+    |> cast(params, [:function, :label, :description, :arity, :argumentsType, :responsesType, :id])
     |> changeset_create_update()
   end
 

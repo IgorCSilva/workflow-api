@@ -1,7 +1,7 @@
 defmodule WorkflowApiWeb.SequenceView do
   use WorkflowApiWeb, :view
 
-  alias WorkflowApiWeb.{SequenceView, BlockView, LinkView}
+  alias WorkflowApiWeb.{SequenceView}
 
   def render("index.json", %{sequences: sequences}) do
     %{data: render_many(sequences, SequenceView, "sequence.json")}
@@ -24,8 +24,7 @@ defmodule WorkflowApiWeb.SequenceView do
       id: sequence.id,
       name: sequence.name,
       description: sequence.description,
-      blocks: render_many(sequence.blocks, BlockView, "block.json"),
-      links: render_many(sequence.links, LinkView, "link.json")
+      functions_sequence: sequence.functions_sequence
     }
   end
 end

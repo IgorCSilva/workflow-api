@@ -18,9 +18,9 @@ defmodule WorkflowApi.Domain.Schemas.Sequence do
   schema "sequences" do
     field :name, :string
     field :description, :string, default: ""
-
-    embeds_many :blocks, Block, on_replace: :delete
-    embeds_many :links, Link, on_replace: :delete
+    field :functions_sequence, {:array, :string}
+    # embeds_many :blocks, Block, on_replace: :delete
+    # embeds_many :links, Link, on_replace: :delete
 
     timestamps()
   end
@@ -30,10 +30,10 @@ defmodule WorkflowApi.Domain.Schemas.Sequence do
   """
   def changeset(sequence, params) do
     sequence
-    |> cast(params, [:name, :description])
-    |> cast_embed(:blocks)
-    |> cast_embed(:links)
-    |> validate_required([:name, :blocks, :links])
+    |> cast(params, [:name, :description, :functions_sequence])
+    # |> cast_embed(:blocks)
+    # |> cast_embed(:links)
+    |> validate_required([:name, :functions_sequence])
 
   end
 
