@@ -24,17 +24,20 @@ defmodule WorkflowApiWeb.Router do
     get "/sequence/list", SequenceController, :list
     put "/sequence/update/:id", SequenceController, :update
     post "/sequence/execute", SequenceController, :execute_sequence
-
     delete "/sequence/delete/:id", SequenceController, :delete
 
-    get "/modules", WorkflowApiController, :modules
-    get "/modules-functions", WorkflowApiController, :modules_functions
-    get "/module-functions/:module_name", WorkflowApiController, :module_functions
+    # Request to manage spreadsheets.
+    get "/read-spreadsheet-data/:spreadsheet_id/:range", SpreadSheetController, :read
+    post "/append-spreadsheet-data/:spreadsheet_id", SpreadSheetController, :append
 
-    get "/sequences", WorkflowApiController, :sequences
-    get "/get-sequence/:sequence_name", WorkflowApiController, :get_sequence
+    # get "/modules", WorkflowApiController, :modules
+    # get "/modules-functions", WorkflowApiController, :modules_functions
+    # get "/module-functions/:module_name", WorkflowApiController, :module_functions
 
-    post "/set-sequence/:sequence_name", WorkflowApiController, :set_sequence
+    # get "/sequences", WorkflowApiController, :sequences
+    # get "/get-sequence/:sequence_name", WorkflowApiController, :get_sequence
+
+    # post "/set-sequence/:sequence_name", WorkflowApiController, :set_sequence
 
   end
 

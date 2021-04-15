@@ -13,6 +13,10 @@ config :workflow_api,
   module_repository: WorkflowApiWeb.Infrastructure.Persistence.ModuleRepositoryPostgres,
   sequence_repository: WorkflowApiWeb.Infrastructure.Persistence.SequenceRepositoryPostgres
 
+# Spreadsheet credentials file to Goth(Google Auth).
+config :goth,
+  json: "service_account.json" |> File.read!
+
 # Configures the endpoint
 config :workflow_api, WorkflowApiWeb.Endpoint,
   url: [host: "localhost"],
