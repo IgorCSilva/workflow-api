@@ -30,9 +30,9 @@ defmodule WorkflowApiWeb.Router do
     get "/read-spreadsheet-data/:spreadsheet_id/:range", SpreadSheetController, :read
     post "/append-spreadsheet-data/:spreadsheet_id", SpreadSheetController, :append
 
-    # get "/modules", WorkflowApiController, :modules
-    # get "/modules-functions", WorkflowApiController, :modules_functions
-    # get "/module-functions/:module_name", WorkflowApiController, :module_functions
+    get "/modules", WorkflowApiController, :modules
+    get "/modules-functions", WorkflowApiController, :modules_functions
+    get "/module-functions/:module_name", WorkflowApiController, :module_functions
 
     # get "/sequences", WorkflowApiController, :sequences
     # get "/get-sequence/:sequence_name", WorkflowApiController, :get_sequence

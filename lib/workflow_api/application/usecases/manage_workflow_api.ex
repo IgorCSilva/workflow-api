@@ -1,10 +1,15 @@
 defmodule WorkflowApi.Application.Usecases.ManageWorkflowApi do
 
+  @doc """
+  Retorna todos os módulos filhos de Context.
+  """
   def modules do
     {:ok, list} = :application.get_key(:workflow_api, :modules)
 
     Enum.filter(list, fn module ->
-      module in [WorkflowApi.Context.Calculator, WorkflowApi.Context.ResponseMessage]
+      module
+      |> to_string()
+      |> String.starts_with?("Elixir.WorkflowApi.Context")
     end)
 
   end
