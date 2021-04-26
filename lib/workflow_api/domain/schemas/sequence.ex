@@ -10,7 +10,7 @@ defmodule WorkflowApi.Domain.Schemas.Sequence do
     """
   use Ecto.Schema
 
-  alias WorkflowApi.Domain.Schemas.{Sequence, Block, Link}
+  # alias WorkflowApi.Domain.Schemas.{Sequence}
 
   import Ecto.Changeset
 

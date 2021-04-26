@@ -1,9 +1,7 @@
 defmodule WorkflowApi.Application.Usecases.ManageModule do
 
-  import Ecto.Changeset
   import Ecto.Query
 
-  alias WorkflowApi.Repo
   alias WorkflowApi.Domain.Schemas.{Module, Function}
   alias WorkflowApi.Application.Utils.ChangesetErrorsMessage
 

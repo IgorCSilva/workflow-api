@@ -141,7 +141,7 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
           any,
           any
         ) :: {:ok, any}
-  def process_sequence([], _params, response_type, result) do
+  def process_sequence([], _params, _response_type, result) do
     {:ok, result}
   end
 

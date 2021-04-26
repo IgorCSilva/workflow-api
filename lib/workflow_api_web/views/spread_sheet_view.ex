@@ -1,7 +1,7 @@
 defmodule WorkflowApiWeb.SpreadSheetView do
   use WorkflowApiWeb, :view
 
-  alias WorkflowApiWeb.SpreadSheetView
+  # alias WorkflowApiWeb.SpreadSheetView
 
   def render("append_updates.json", %{spread_sheet: updates}) do
     %{

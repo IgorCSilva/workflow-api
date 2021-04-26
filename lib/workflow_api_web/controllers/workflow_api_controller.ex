@@ -47,7 +47,7 @@ defmodule WorkflowApiWeb.WorkflowApiController do
 
   def set_sequence(conn, params) do
     case ManageWorkflowApi.set_sequence(params) do
-      {:ok, result} ->
+      {:ok, _result} ->
         conn
         |> put_status(:ok)
         |> json(%{data: "ok"})
