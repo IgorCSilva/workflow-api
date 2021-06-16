@@ -8,5 +8,6 @@ defmodule WorkflowApi.Domain.Repositories.IFunctionRepository do
   @callback get_by_id_list([String.t()]) :: [%Function{}]
   @callback get(String.t() | integer()) :: %Function{} | nil
   @callback update(%Ecto.Changeset{}) :: {:ok, %Function{}} | {:error, map()}
-  # @callback delete_service(%Service{} | Ecto.Changeset.t()) :: {:ok, %Service{}} | {:error, map()}
+  @callback delete(%Function{} | Ecto.Changeset.t()) :: :ok | {:error, map()}
+
 end

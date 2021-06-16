@@ -63,4 +63,19 @@ defmodule WorkflowApiWeb.FunctionController do
     end
 
   end
+
+  @doc """
+  Delete function by id.
+  """
+  def delete(conn, %{"id" => id}) do
+    case ManageFunction.delete(id, @function_repository) do
+      :ok ->
+        conn
+        |> put_status(:ok)
+        |> json(%{data: :ok})
+
+      {:error, list_errors} ->
+        ManageErrors.call(conn, list_errors, :bad_request)
+    end
+  end
 end

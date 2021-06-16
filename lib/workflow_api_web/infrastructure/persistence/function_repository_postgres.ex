@@ -65,17 +65,17 @@ defmodule WorkflowApiWeb.Infrastructure.Persistence.FunctionRepositoryPostgres d
     Repo.update(changeset)
   end
 
-  @doc """
-  Deleta um serviço.
+   @doc """
+  Deleta uma função.
   Caso ocorra algum erro o mesmo é detalhado.
   """
-  # @impl IServiceRepository
-  # def delete_service(service) do
-  #   case Repo.delete(service) do
-  #     {:ok, deleted_service} -> {:ok, deleted_service}
+  @impl IFunctionRepository
+  def delete(function) do
+    case Repo.delete(function) do
+      {:ok, _deleted} -> :ok
 
-  #     {:error, changeset} -> ChangesetErrorsMessage.error_tuple_traverse_message(changeset)
-  #   end
-  # end
+      {:error, changeset} -> ChangesetErrorsMessage.error_tuple_traverse_message(changeset)
+    end
+  end
 
 end

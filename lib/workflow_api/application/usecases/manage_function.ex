@@ -66,4 +66,21 @@ defmodule WorkflowApi.Application.Usecases.ManageFunction do
     end
 
   end
+
+
+  @doc """
+  Delete function by id or return error if we receive an invalid id.
+  """
+  def delete(id, repository) do
+
+    with {:ok, id} <- Ecto.UUID.cast(id) do
+      case repository.get(id) do
+        nil -> {:error, "There isn't function with this id."}
+
+        function -> repository.delete(function)
+      end
+    else
+      :error -> {:error, "Invalid id."}
+    end
+  end
 end

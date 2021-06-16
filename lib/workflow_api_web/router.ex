@@ -13,6 +13,7 @@ defmodule WorkflowApiWeb.Router do
     get "/function/list", FunctionController, :list
     get "/function/:id", FunctionController, :get
     put "/function/update/:id", FunctionController, :update
+    delete "/function/delete/:id", FunctionController, :delete
 
     # Manipulating modules.
     post "/module/create", ModuleController, :create
