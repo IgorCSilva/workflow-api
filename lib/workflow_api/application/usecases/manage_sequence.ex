@@ -44,6 +44,9 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
         case repository.update(changeset) do
           {:ok, sequence} ->
             IO.inspect(sequence)
+            # Inserindo modificação na tabela.
+            :ets.insert(:sequence_list, {sequence.name, sequence})
+
             {:ok, sequence}
 
           {:error, changeset_update} ->
@@ -67,18 +70,50 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
 
     sequence_name = params["name"]
 
+    # case :ets.lookup(:sequence_list, sequence_name) do
+    #   [{^sequence_name, table_sequence}] ->
+    #     # IO.puts("ENCONTROU NA TABELA")
+    #     table_sequence
+
+    #   _ ->
+    #     # IO.puts("BUSCANDO NO REPO")
+
+    #     repo_sequence = repository.get_by_name(sequence_name)
+
+    #     # Inserindo na tabela.
+    #     :ets.insert(:sequence_list, {sequence_name, repo_sequence})
+
+    #     repo_sequence
+    # end
     case repository.get_by_name(sequence_name) do
       nil ->
         {:error, "Sequence not found"}
 
       sequence ->
-        IO.inspect(sequence)
+        # IO.inspect(sequence)
         # Formando uma lista com os ids das funções utilizadas.
         sequence_functions_id =
           sequence.functions_sequence
           |> Enum.uniq()
 
-        # Buscando funções no repositório.
+
+        # name_table_function_list = "#{sequence_name}__function_list"
+        # # Buscando funções na tabela.
+        # case :ets.lookup(:sequence_list, name_table_function_list) do
+        #   [{^name_table_function_list, table_function_list}] ->
+        #     # IO.inspect("na table")
+        #     table_function_list
+
+        #   _ ->
+        #     # IO.inspect("BUSCANDO N REPO")
+        #     # IO.inspect("BUSCANDO N REPO")
+        #     function_list = function_repository.get_by_id_list(sequence_functions_id)
+
+        #     # Inserindo na tabela.
+        #     :ets.insert(:sequence_list, {name_table_function_list, function_list})
+
+        #     function_list
+        # end
         case function_repository.get_by_id_list(sequence_functions_id) do
           [] ->
             {:error, "Functions not found!"}

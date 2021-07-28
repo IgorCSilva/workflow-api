@@ -11,7 +11,7 @@ defmodule WorkflowApiWeb.SequenceController do
   def create(conn, params) do
     case ManageSequence.create(params, @sequence_repository) do
       {:ok, sequence} ->
-        IO.inspect(sequence)
+        # IO.inspect(sequence)
         conn
         |> put_status(:ok)
         |> render("show.json", %{sequence: sequence})
@@ -55,7 +55,7 @@ defmodule WorkflowApiWeb.SequenceController do
 
     case ManageSequence.execute_sequence(params, @sequence_repository, @function_repository) do
       {:ok, result} ->
-        IO.inspect(result)
+        # IO.inspect(result)
         conn
         |> put_status(:ok)
         |> render("show.json", %{sequence_result: result})

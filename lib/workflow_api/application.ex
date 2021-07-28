@@ -10,6 +10,7 @@ defmodule WorkflowApi.Application do
 
     # Criando tabela ets.
     :ets.new(:sequence_operations, [:set, :public, :named_table])
+    :ets.new(:sequence_list, [:set, :public, :named_table])
 
     children = [
       # Start the Ecto repository
