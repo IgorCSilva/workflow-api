@@ -58,17 +58,4 @@ defmodule WorkflowApi.Domain.Schemas.Function do
 
   end
 
-  @doc """
-  Validating id format.
-  """
-  # def validate_id_format(changeset, field) do
-  #   validate_change(changeset, field, fn (field, value) ->
-
-  #     case Ecto.UUID.cast(value) do
-  #       {:ok, _id} -> []
-  #       :error -> [{field, "id inválido."}]
-  #       _ -> [{field, "Erro referente ao id fornecido."}]
-  #     end
-  #   end)
-  # end
 end

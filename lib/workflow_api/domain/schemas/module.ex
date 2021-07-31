@@ -37,40 +37,4 @@ defmodule WorkflowApi.Domain.Schemas.Module do
 
   end
 
-  @doc """
-  Initial Changeset to update a plan.
-  """
-  # def changeset_update(_function, params) do
-  #   %Function{}
-  #   |> cast(params, [:name, :description, :price, :period, :id])
-  #   |> GeneralFunctions.validate_uuid(:id)
-  #   |> changeset_create_update(params)
-  # end
-
-  @doc """
-  Changeset with create and update validations.
-  """
-  # def changeset_create_update(changeset, _params) do
-  #   changeset
-  #   |> unsafe_validate_unique(:name, Stores.Repo, message: "Este nome de plano já existe.")
-  #   |> validate_length(:name, min: 4)
-  #   |> validate_number(:price, greater_than: 0)
-  #   |> validate_number(:period, greater_than: 0)
-  #   |> unique_constraint(:name)
-
-  # end
-
-  @doc """
-  Validating id format.
-  """
-  # def validate_id_format(changeset, field) do
-  #   validate_change(changeset, field, fn (field, value) ->
-
-  #     case Ecto.UUID.cast(value) do
-  #       {:ok, _id} -> []
-  #       :error -> [{field, "id inválido."}]
-  #       _ -> [{field, "Erro referente ao id fornecido."}]
-  #     end
-  #   end)
-  # end
 end
