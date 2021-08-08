@@ -70,51 +70,45 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
 
     sequence_name = params["name"]
 
-    # case :ets.lookup(:sequence_list, sequence_name) do
-    #   [{^sequence_name, table_sequence}] ->
-    #     # IO.puts("ENCONTROU NA TABELA")
-    #     table_sequence
+    case :ets.lookup(:sequence_list, sequence_name) do
+      [{^sequence_name, table_sequence}] ->
+        table_sequence
 
-    #   _ ->
-    #     # IO.puts("BUSCANDO NO REPO")
+      _ ->
+        repo_sequence = repository.get_by_name(sequence_name)
 
-    #     repo_sequence = repository.get_by_name(sequence_name)
+        # Inserindo na tabela.
+        :ets.insert(:sequence_list, {sequence_name, repo_sequence})
 
-    #     # Inserindo na tabela.
-    #     :ets.insert(:sequence_list, {sequence_name, repo_sequence})
-
-    #     repo_sequence
-    # end
-    case repository.get_by_name(sequence_name) do
+        repo_sequence
+    end
+    |> case do
       nil ->
         {:error, "Sequence not found"}
 
       sequence ->
-        # IO.inspect(sequence)
         # Formando uma lista com os ids das funções utilizadas.
         sequence_functions_id =
           sequence.functions_sequence
           |> Enum.uniq()
 
 
-        # name_table_function_list = "#{sequence_name}__function_list"
-        # # Buscando funções na tabela.
-        # case :ets.lookup(:sequence_list, name_table_function_list) do
-        #   [{^name_table_function_list, table_function_list}] ->
-        #     # IO.inspect("na table")
-        #     table_function_list
+        name_table_function_list = "#{sequence_name}__function_list"
+        # Buscando funções na tabela.
+        case :ets.lookup(:sequence_list, name_table_function_list) do
+          [{^name_table_function_list, table_function_list}] ->
 
-        #   _ ->
-        #     # IO.inspect("BUSCANDO N REPO")
-        #     # IO.inspect("BUSCANDO N REPO")
-        #     function_list = function_repository.get_by_id_list(sequence_functions_id)
+            table_function_list
 
-        #     # Inserindo na tabela.
-        #     :ets.insert(:sequence_list, {name_table_function_list, function_list})
+          _ ->
+            function_list = function_repository.get_by_id_list(sequence_functions_id)
 
-        #     function_list
-        # end
-        case function_repository.get_by_id_list(sequence_functions_id) do
+            # Inserindo na tabela.
+            :ets.insert(:sequence_list, {name_table_function_list, function_list})
+
+            function_list
+        end
+        |> case do
           [] ->
             {:error, "Functions not found!"}
 
@@ -150,7 +144,6 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
   end
 
   def count_arity_sequence(sequence) do
-    # [head | tail] = sequence
 
     total_arity =
       Enum.reduce(sequence, {0, @type_response_no_reply} , fn block, {current_arity, type_response} ->
@@ -158,7 +151,7 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
           block.arity == 0 ->
             {current_arity, block.responsesType}
 
-            type_response == @type_response_no_reply ->
+          type_response == @type_response_no_reply ->
             {current_arity + block.arity, block.responsesType}
 
           true ->
@@ -167,15 +160,11 @@ defmodule WorkflowApi.Application.Usecases.ManageSequence do
       end)
 
     {result_arity, _type_reponse} = total_arity
+
     result_arity
   end
 
-  @spec process_sequence(
-          [atom | %{arity: any, function: binary, module: atom | map}],
-          any,
-          any,
-          any
-        ) :: {:ok, any}
+
   def process_sequence([], _params, _response_type, result) do
     {:ok, result}
   end
